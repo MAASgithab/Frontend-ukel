@@ -8,7 +8,7 @@ import {
   TextInput,
 } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiShoppingCart, FiSearch, FiUser, FiLogOut } from "react-icons/fi";
+import { FiShoppingCart, FiSearch, FiUser, FiLogOut, FiPackage } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
 export default function NavbarComponent() {
@@ -77,6 +77,15 @@ export default function NavbarComponent() {
               <FiUser className="w-4 h-4" />
               <span className="font-medium">{user.nama}</span>
             </div>
+            <Link to="/pesanan-saya">
+              <Button
+                color="light"
+                className="border border-gray-200 text-gray-700"
+              >
+                <FiPackage className="w-4 h-4 mr-1" />
+                Pesanan
+              </Button>
+            </Link>
             <Button
               color="light"
               className="border border-gray-200 text-gray-700"

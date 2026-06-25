@@ -60,7 +60,7 @@ export default function Cart() {
             <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
               <p className="text-gray-500 text-lg">Keranjang belanja kosong</p>
               <Button
-                className="mt-4 bg-[#06FE9F] text-gray-900 font-semibold"
+                className="mt-4 bg-[#06FE9F] text-white font-semibold"
                 onClick={() => navigate("/listProduk")}
               >
                 Belanja Sekarang
@@ -83,7 +83,7 @@ export default function Cart() {
 
                     {/* Info Produk */}
                     <div className="flex-1">
-                      <h3 className="text-base font-semibold text-gray-900">
+                      <h3 className="text-base font-semibold text-white">
                         {item.nama}
                       </h3>
                       <p className="text-sm text-gray-500">{item.kategori}</p>
@@ -100,7 +100,7 @@ export default function Cart() {
                       >
                         <FiMinus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="text-base font-semibold text-gray-900 w-8 text-center">
+                      <span className="text-base font-semibold text-white w-8 text-center">
                         {item.jumlah}
                       </span>
                       <button
@@ -113,7 +113,7 @@ export default function Cart() {
 
                     {/* Subtotal & Hapus */}
                     <div className="text-right">
-                      <p className="text-base font-bold text-gray-900">
+                      <p className="text-base font-bold text-white">
                         {formatPrice(item.harga * item.jumlah)}
                       </p>
                       <button
@@ -131,7 +131,7 @@ export default function Cart() {
               {/* Tombol Beli */}
               <div className="flex justify-end pt-4">
                 <Button
-                  className="bg-[#06FE9F] text-gray-900 font-semibold rounded-xl px-8 py-3 text-base"
+                  className="bg-[#06FE9F] text-white font-semibold rounded-xl px-8 py-3 text-base"
                   onClick={() => navigate("/orderdetail")}
                 >
                   <FiShoppingBag className="w-5 h-5 mr-2" />

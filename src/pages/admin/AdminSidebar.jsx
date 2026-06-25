@@ -4,7 +4,7 @@ export default function AdminSidebar({ activeTab, setActiveTab }) {
   const tabs = [
     { key: "produk", label: "Kelola Produk" },
     { key: "user", label: "Kelola User" },
-    { key: "order", label: "Kelola Order" },
+    { key: "orderdetail", label: "Order Detail" },
   ];
 
   return (

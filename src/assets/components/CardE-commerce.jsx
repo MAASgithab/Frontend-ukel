@@ -47,7 +47,7 @@ export default function CardProdukComponent({ product }) {
         <span className="text-xs text-[#0665FE] font-medium">
           {product.kategori}
         </span>
-        <h3 className="text-base font-semibold text-gray-900 mt-1">
+        <h3 className="text-base font-semibold text-white mt-1">
           {product.nama}
         </h3>
         <p className="text-sm text-gray-500">Lebar: {product.lebar} cm</p>
@@ -60,7 +60,7 @@ export default function CardProdukComponent({ product }) {
           </Button>
           <Button
             size="sm"
-            className="flex-1 bg-[#06FE9F] text-gray-900 font-semibold rounded-xl"
+            className="flex-1 bg-[#06FE9F] text-white font-semibold rounded-xl"
             onClick={addToCart}
           >
             <FiShoppingCart className="w-4 h-4 mr-1" />

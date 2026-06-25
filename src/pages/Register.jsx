@@ -93,7 +93,7 @@ export default function Register() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon </label>
             <input
               type="text"
               placeholder="Masukkan no telepon"
@@ -103,7 +103,7 @@ export default function Register() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat (opsional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
             <textarea
               placeholder="Masukkan alamat"
               value={alamat}

@@ -9,6 +9,7 @@ import AdminPage from "../pages/AdminPage";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import OrderDetail from "../pages/OrderDetail";
+import PesananSaya from "../pages/PesananSaya";
 import { ProtectedAdmin, ProtectedUser } from "../assets/components/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -67,6 +68,14 @@ export const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "pesanan-saya",
+        element: (
+          <ProtectedUser>
+            <PesananSaya />
+          </ProtectedUser>
+        ),
       },
     ],
   },

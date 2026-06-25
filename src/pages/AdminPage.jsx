@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 import AdminSidebar from "./admin/AdminSidebar";
 import AdminProductsTab from "./admin/AdminProductsTab";
 
-import AdminOrderTab from "../assets/components/AdminOrderTab";
+import AdminOrderDetailTab from "../assets/components/AdminOrderDetailTab";
 import AdminUserTab from "../assets/components/AdminUserTab";
 import AdminProductModal from "../assets/components/AdminProductModal";
 import AdminEditUserModal from "../assets/components/AdminEditUserModal";
@@ -292,6 +293,188 @@ export default function AdminPage() {
     }
   }
 
+  // 🔹 Export data user ke Excel
+  function exportUsersToExcel() {
+    try {
+      const dataRows = userList.map((user) => ({
+        Nama: user.nama || "-",
+        Email: user.email || "-",
+        Role: user.role?.nama_role || "User",
+        "No. Telepon": user.no_telp || "-",
+        Alamat: user.alamat || "-",
+        "Tanggal Daftar": new Date(user.createdAt).toLocaleDateString("id-ID"),
+      }));
+
+      if (dataRows.length === 0) {
+        alert("Tidak ada data user untuk di-export");
+        return;
+      }
+
+      const headers = Object.keys(dataRows[0]);
+
+      // Buat worksheet dengan judul + header + data
+      const ws = XLSX.utils.aoa_to_sheet([]);
+
+      // Baris 1: Judul (merge A1:F1)
+      ws["A1"] = { t: "s", v: "DATA USERS - BATIKNESIA" };
+      ws["A1"].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: "center" } };
+      ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }];
+
+      // Baris 2: Header
+      XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A2" });
+      const headerRow = ws["A2"];
+      if (headerRow) {
+        headerRow.s = { font: { bold: true }, alignment: { horizontal: "center" } };
+      }
+
+      // Baris 3+: Data
+      const dataAoa = dataRows.map((row) => headers.map((h) => row[h]));
+      XLSX.utils.sheet_add_aoa(ws, dataAoa, { origin: "A3" });
+
+      // Set !ref secara manual agar border terpasang dengan benar
+      const maxRow = 2 + dataAoa.length; // baris 1 judul, baris 2 header, sisanya data
+      const maxCol = headers.length - 1;
+      ws["!ref"] = `A1:${XLSX.utils.encode_col(maxCol)}${maxRow}`;
+
+      // Border untuk semua cell yang terisi
+      const range = XLSX.utils.decode_range(ws["!ref"]);
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!ws[cellAddress]) ws[cellAddress] = { v: "" };
+          ws[cellAddress].s = {
+            ...(ws[cellAddress].s || {}),
+            border: {
+              top: { style: "thin" },
+              bottom: { style: "thin" },
+              left: { style: "thin" },
+              right: { style: "thin" },
+            },
+          };
+        }
+      }
+
+      // Set column width
+      ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 18) }));
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, ws, "Users");
+      XLSX.writeFile(workbook, `users-batiknesia-${Date.now()}.xlsx`);
+    } catch (error) {
+      console.error("Gagal export Excel user:", error.message);
+      alert("Gagal export data user: " + error.message);
+    }
+  }
+
+  // 🔹 Export data order ke Excel
+  function exportToExcel() {
+    try {
+      const dataRows = orderList.map((order) => {
+        // Flat data per item dalam order
+        return order.order_details?.map((detail) => ({
+          "ID Order": order.id.slice(0, 12),
+          Customer: order.user?.nama || "-",
+          "No. Telepon": order.user?.no_telp || "-",
+          Produk: detail.kain?.nama || "Produk",
+          Jumlah: detail.jumlah,
+          "Harga Satuan": parseInt(detail.harga_satuan || 0).toLocaleString("id-ID"),
+          Subtotal: parseInt(detail.subtotal || 0).toLocaleString("id-ID"),
+          "Total Harga": parseInt(order.total_harga).toLocaleString("id-ID"),
+          Status: order.status,
+          Tanggal: new Date(order.createdAt).toLocaleDateString("id-ID"),
+        }));
+      }).flat();
+
+      if (dataRows.length === 0) {
+        alert("Tidak ada data order untuk di-export");
+        return;
+      }
+
+      const headers = Object.keys(dataRows[0]);
+
+      // Buat worksheet dengan judul + header + data
+      const ws = XLSX.utils.aoa_to_sheet([]);
+
+      // Baris 1: Judul (merge A1:J1)
+      ws["A1"] = { t: "s", v: "DATA ORDERS - BATIKNESIA" };
+      ws["A1"].s = { font: { bold: true, sz: 14 }, alignment: { horizontal: "center" } };
+      ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }];
+
+      // Baris 2: Header
+      XLSX.utils.sheet_add_aoa(ws, [headers], { origin: "A2" });
+      const headerRow = ws["A2"];
+      if (headerRow) {
+        headerRow.s = { font: { bold: true }, alignment: { horizontal: "center" } };
+      }
+
+      // Baris 3+: Data
+      const dataAoa = dataRows.map((row) => headers.map((h) => row[h]));
+      XLSX.utils.sheet_add_aoa(ws, dataAoa, { origin: "A3" });
+
+      // Set !ref secara manual agar border terpasang dengan benar
+      const maxRow = 2 + dataAoa.length; // baris 1 judul, baris 2 header, sisanya data
+      const maxCol = headers.length - 1;
+      ws["!ref"] = `A1:${XLSX.utils.encode_col(maxCol)}${maxRow}`;
+
+      // Border untuk semua cell yang terisi
+      const range = XLSX.utils.decode_range(ws["!ref"]);
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          if (!ws[cellAddress]) ws[cellAddress] = { v: "" };
+          ws[cellAddress].s = {
+            ...(ws[cellAddress].s || {}),
+            border: {
+              top: { style: "thin" },
+              bottom: { style: "thin" },
+              left: { style: "thin" },
+              right: { style: "thin" },
+            },
+          };
+        }
+      }
+
+      // Set column width
+      ws["!cols"] = headers.map((h) => ({ wch: Math.max(h.length, 18) }));
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, ws, "Orders");
+      XLSX.writeFile(workbook, `orders-batiknesia-${Date.now()}.xlsx`);
+    } catch (error) {
+      console.error("Gagal export Excel:", error.message);
+      alert("Gagal export data: " + error.message);
+    }
+  }
+
+  // 🔹 Admin klik checklist → finalize order (potong stok)
+  async function finalizeOrder(id) {
+    const confirmation = window.confirm(
+      "Apakah Anda yakin ingin mengkonfirmasi pengiriman order ini? Stok akan dipotong.",
+    );
+    if (!confirmation) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/orders/${id}/finalize`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      alert("Pesanan berhasil dikonfirmasi! Stok telah dipotong.");
+      getOrder();
+    } catch (error) {
+      console.error(error.message);
+      alert("Gagal finalize order: " + error.message);
+    }
+  }
+
   async function getUser() {
     try {
       setLoadingUser(true);
@@ -318,7 +501,7 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === "order") {
+    if (activeTab === "orderdetail") {
       getOrder();
     }
   }, [activeTab]);
@@ -412,8 +595,8 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             {activeTab === "produk"
               ? "Kelola Produk (Kain)"
-              : activeTab === "order"
-                ? "Kelola Order"
+              : activeTab === "orderdetail"
+                ? "Order Detail"
                 : "Kelola User"}
           </h1>
 
@@ -429,15 +612,17 @@ export default function AdminPage() {
             />
           )}
 
-          {activeTab === "order" && (
-            <AdminOrderTab
+          {activeTab === "orderdetail" && (
+            <AdminOrderDetailTab
               searchOrder={searchOrder}
               setSearchOrder={setSearchOrder}
               orderList={orderList}
               loadingOrder={loadingOrder}
               filteredOrders={filteredOrders}
               updateStatusOrder={updateStatusOrder}
+              finalizeOrder={finalizeOrder}
               deleteOrder={deleteOrder}
+              exportToExcel={exportToExcel}
             />
           )}
 
@@ -450,6 +635,7 @@ export default function AdminPage() {
               filteredUsers={filteredUsers}
               openEditUserModal={openEditUserModal}
               deleteUser={deleteUser}
+              exportUsersToExcel={exportUsersToExcel}
             />
           )}
         </div>

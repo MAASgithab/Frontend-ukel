@@ -1,6 +1,6 @@
 import React from "react";
-import { TextInput } from "flowbite-react";
-import { FiEdit2, FiTrash2, FiSearch } from "react-icons/fi";
+import { TextInput, Button } from "flowbite-react";
+import { FiEdit2, FiTrash2, FiSearch, FiDownload } from "react-icons/fi";
 
 export default function AdminUserTab({
   searchUser,
@@ -10,6 +10,7 @@ export default function AdminUserTab({
   filteredUsers,
   openEditUserModal,
   deleteUser,
+  exportUsersToExcel,
 }) {
   return (
     <>
@@ -22,6 +23,13 @@ export default function AdminUserTab({
           value={searchUser}
           onChange={(e) => setSearchUser(e.target.value)}
         />
+        <Button
+          className="bg-green-600 text-white font-semibold"
+          onClick={exportUsersToExcel}
+        >
+          <FiDownload className="w-4 h-4 mr-2" />
+          Export Excel
+        </Button>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -34,6 +42,9 @@ export default function AdminUserTab({
                 </th>
                 <th className="text-left py-4 px-4 font-semibold text-gray-900">
                   Email
+                </th>
+                <th className="text-left py-4 px-4 font-semibold text-gray-900">
+                  Password
                 </th>
                 <th className="text-left py-4 px-4 font-semibold text-gray-900">
                   Role
@@ -68,6 +79,9 @@ export default function AdminUserTab({
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-500">
                       {user.email}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-500">
+                      {user.password}
                     </td>
                     <td className="py-3 px-4">
                       <span

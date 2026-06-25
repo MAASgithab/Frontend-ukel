@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "flowbite-react";
-import { FiArrowRight, FiCheckCircle, FiPrinter } from "react-icons/fi";
+import { FiCheckCircle, FiPackage } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 function formatPrice(price) {
@@ -21,33 +21,6 @@ export default function OrderDetail() {
   const [orderItems, setOrderItems] = useState(() => {
     return JSON.parse(localStorage.getItem("cart") || "[]");
   });
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(orderItems));
-    window.dispatchEvent(new Event("cartUpdated"));
-  }, [orderItems]);
-
-  function increaseQuantity(id) {
-    setOrderItems(
-      orderItems.map((item) =>
-        item.id === id ? { ...item, jumlah: item.jumlah + 1 } : item
-      )
-    );
-  }
-
-  function decreaseQuantity(id) {
-    setOrderItems(
-      orderItems.map((item) =>
-        item.id === id && item.jumlah > 1
-          ? { ...item, jumlah: item.jumlah - 1 }
-          : item
-      )
-    );
-  }
-
-  function removeItem(id) {
-    setOrderItems(orderItems.filter((item) => item.id !== id));
-  }
 
   const totalHarga = orderItems.reduce(
     (total, item) => total + item.harga * item.jumlah,
@@ -114,15 +87,28 @@ export default function OrderDetail() {
           <p className="text-lg font-mono font-bold text-[#0665FE] mb-6">
             #{orderId.slice(0, 12)}
           </p>
-          <p className="text-gray-500 mb-6">
-            Pesanan Anda sedang diproses.
+          <p className="text-gray-500 mb-2">
+            Pesanan Anda sedang diproses oleh admin.
           </p>
-          <Button
-            className="bg-[#06FE9F] text-gray-900 font-semibold"
-            onClick={() => navigate("/home")}
-          >
-            Kembali ke Beranda
-          </Button>
+          <p className="text-xs text-gray-400 mb-6">
+            Pantau status pesanan Anda di menu "Pesanan Saya"
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button
+              className="bg-[#06FE9F] text-gray-900 font-semibold"
+              onClick={() => navigate("/pesanan-saya")}
+            >
+              <FiPackage className="w-5 h-5 mr-2" />
+              Lihat Pesanan Saya
+            </Button>
+            <Button
+              color="light"
+              className="border border-gray-200 text-gray-700"
+              onClick={() => navigate("/home")}
+            >
+              Kembali ke Beranda
+            </Button>
+          </div>
         </div>
       </div>
     );
